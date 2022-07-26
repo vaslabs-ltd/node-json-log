@@ -1,5 +1,15 @@
-import { sum } from "./logger";
+import { FunctionalLogger } from "./logger";
 
-test('adds 1 + 2 to equal 3', () => {
-    expect(sum(1, 2)).toBe(3);
-  });
+
+
+test('logs simple message in Json format', () =>{
+ 
+    const logMessage = "Hello"
+    const expectedLogStatement = {message: logMessage}
+    const logger = new FunctionalLogger()
+    
+    const logOutput = logger.log(logMessage)
+
+    expect(logOutput).toEqual(expectedLogStatement)
+ 
+});
