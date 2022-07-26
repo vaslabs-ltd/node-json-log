@@ -1,0 +1,25 @@
+{
+  "name": "json-log",
+  "version": "1.0.0",
+  "description": "Small library that logs with json format",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaslabs-ltd/node-json-log.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vaslabs-ltd/node-json-log/issues"
+  },
+  "homepage": "https://github.com/vaslabs-ltd/node-json-log#readme",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  },
+  "devDependencies": {
+    "jest": "^28.1.3"
+  }
+}
