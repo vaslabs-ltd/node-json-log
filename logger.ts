@@ -13,6 +13,30 @@ export class FunctionalLogger{
     }
 }
 
+export class TargetLogger{
+    
+    jsonLogger: FunctionalLogger
+    sendToTarget: (j: any) => void;
+
+    constructor(sendToTarget: (j: any) => void ){
+        this.jsonLogger = new FunctionalLogger();
+        this.sendToTarget = sendToTarget
+    }
+
+    info(logMessage: string) {
+        this.log(logMessage)
+    }
+
+    warn(logMessage: string) {
+        this.log(logMessage, Severity.WARN)
+    }
+    
+    log(logMessage: string, severity: Severity = Severity.INFO){
+        const json = this.jsonLogger.log(logMessage, severity)
+        this.sendToTarget(json)
+    }
+}
+
 /*
     enums are singleton types (single instance within the virtual machine process (nodejs runs in a v8 VM))
 

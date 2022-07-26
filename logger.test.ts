@@ -1,4 +1,4 @@
-import { FunctionalLogger, Severity } from "./logger";
+import { FunctionalLogger, Severity, TargetLogger } from "./logger";
 
 test('logs simple message in Json format', () =>{
  
@@ -43,3 +43,34 @@ test('logs simple message with custom severity in Json format', () =>{
     expect(logOutput).toEqual(expectedLogStatement)
  
 });
+
+test('logs simple message to target', () => {
+    const logMessage = "Hello"
+    const expectedLogStatement = {message: logMessage, severity: Severity.INFO}
+
+    let target: string = "";
+
+    const logger = new TargetLogger(json => {target = JSON.stringify(json);})
+
+    logger.log(logMessage)
+
+    expect(target).toEqual(JSON.stringify(expectedLogStatement))
+})
+
+test('logs messages with severity to target', () => {
+    const logMessage = "Hello"
+    const expectedLogStatement: (s: Severity) => {message: String, severity: Severity} = 
+        (s: Severity) => ({message: logMessage, severity: s})
+
+    let target: string = "";
+
+    const logger = new TargetLogger(json => {target = JSON.stringify(json);})
+
+    logger.info(logMessage)
+    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.INFO)))
+
+    logger.warn(logMessage)
+    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.WARN)))
+}
+
+)
