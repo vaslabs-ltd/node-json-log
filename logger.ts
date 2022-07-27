@@ -30,6 +30,18 @@ export class TargetLogger{
     warn(logMessage: string) {
         this.log(logMessage, Severity.WARN)
     }
+
+    trace(logMessage: string) {
+        this.log(logMessage, Severity.TRACE)
+    }
+
+    debug(logMessage: string) {
+        this.log(logMessage, Severity.DEBUG)
+    }
+
+    error(logMessage: string) {
+        this.log(logMessage, Severity.ERROR)
+    }
     
     log(logMessage: string, severity: Severity = Severity.INFO){
         const json = this.jsonLogger.log(logMessage, severity)

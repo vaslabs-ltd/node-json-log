@@ -71,6 +71,15 @@ test('logs messages with severity to target', () => {
 
     logger.warn(logMessage)
     expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.WARN)))
+
+    logger.trace(logMessage)
+    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.TRACE)))
+
+    logger.debug(logMessage)
+    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.DEBUG)))
+
+    logger.error(logMessage)
+    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.ERROR)))
 }
 
 )
