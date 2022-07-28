@@ -13,6 +13,30 @@ test('logs simple message in Json format', () =>{
  
 });
 
+test("logs message with custom property from user", () =>{
+    const logMessage = "Hello"
+    const customValue = "something"
+    
+    const expectedLogStatement = {message: logMessage, severity: Severity.INFO, customProperty: customValue}
+    const logger = new FunctionalLogger()
+
+    const logOutput = logger.log(logMessage, Severity.INFO, {customProperty: customValue})
+
+    expect(logOutput).toEqual(expectedLogStatement)
+})
+
+test("custom properties take precedence over logger properties", () => {
+    const logMessage = "Hello"
+    const customValue = "something"
+    
+    const expectedLogStatement = {message: logMessage, severity: customValue}
+    const logger = new FunctionalLogger()
+
+    const logOutput = logger.log(logMessage, Severity.INFO, {severity: customValue})
+
+    expect(logOutput).toEqual(expectedLogStatement)
+})
+
 
 /*
     include severity
@@ -58,28 +82,55 @@ test('logs simple message to target', () => {
 })
 
 test('logs messages with severity to target', () => {
-    const logMessage = "Hello"
-    const expectedLogStatement: (s: Severity) => {message: String, severity: Severity} = 
-        (s: Severity) => ({message: logMessage, severity: s})
+        const logMessage = "Hello"
+        const expectedLogStatement: (s: Severity) => {message: String, severity: Severity} = 
+            (s: Severity) => ({message: logMessage, severity: s})
 
-    let target: string = "";
+        let target: string = "";
 
-    const logger = new TargetLogger(json => {target = JSON.stringify(json);})
+        const logger = new TargetLogger(json => {target = JSON.stringify(json);})
 
-    logger.info(logMessage)
-    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.INFO)))
+        logger.info(logMessage)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.INFO)))
 
-    logger.warn(logMessage)
-    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.WARN)))
+        logger.warn(logMessage)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.WARN)))
 
-    logger.trace(logMessage)
-    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.TRACE)))
+        logger.trace(logMessage)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.TRACE)))
 
-    logger.debug(logMessage)
-    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.DEBUG)))
+        logger.debug(logMessage)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.DEBUG)))
 
-    logger.error(logMessage)
-    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.ERROR)))
-}
+        logger.error(logMessage)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.ERROR)))
+    }
+)
 
+
+test('logs messages with severity and custom property to target', () => {
+        const logMessage = "Hello"
+        const expectedCustomProperties = {traceId: "somevalue"}
+        const expectedLogStatement: (s: Severity) => {message: string, severity: Severity} = 
+            (s: Severity) => ({message: logMessage, severity: s, ...expectedCustomProperties})
+
+        let target: string = "";
+
+        const logger = new TargetLogger(json => {target = JSON.stringify(json);})
+
+        logger.info(logMessage, expectedCustomProperties)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.INFO)))
+
+        logger.warn(logMessage, expectedCustomProperties)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.WARN)))
+
+        logger.trace(logMessage, expectedCustomProperties)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.TRACE)))
+
+        logger.debug(logMessage, expectedCustomProperties)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.DEBUG)))
+
+        logger.error(logMessage, expectedCustomProperties)
+        expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.ERROR)))
+    }
 )
