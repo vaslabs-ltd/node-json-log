@@ -25,6 +25,18 @@ test("logs message with custom property from user", () =>{
     expect(logOutput).toEqual(expectedLogStatement)
 })
 
+test("custom properties take precedence over logger properties", () => {
+    const logMessage = "Hello"
+    const customValue = "something"
+    
+    const expectedLogStatement = {message: logMessage, severity: customValue}
+    const logger = new FunctionalLogger()
+
+    const logOutput = logger.log(logMessage, Severity.INFO, {severity: customValue})
+
+    expect(logOutput).toEqual(expectedLogStatement)
+})
+
 
 /*
     include severity
