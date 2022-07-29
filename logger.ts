@@ -6,6 +6,13 @@ export enum Severity {
     ERROR = "ERROR"
 }
 
+export enum Verbosity {
+    TRACE = 0,
+    DEBUG = 1,
+    INFO = 2,
+    WARN = 3, 
+    ERROR = 4
+}
 
 export class FunctionalLogger{
     log(logMessage: string, severity: Severity = Severity.INFO, userProperties: object = {}) {
@@ -18,26 +25,36 @@ export class TargetLogger{
     
     jsonLogger: FunctionalLogger
     sendToTarget: (j: any) => void;
+    verbosity: Verbosity;
 
-    constructor(sendToTarget: (j: any) => void ){
+    constructor(sendToTarget: (j: any) => void, verbosity: Verbosity = Verbosity.TRACE ){
         this.jsonLogger = new FunctionalLogger();
         this.sendToTarget = sendToTarget
+        this.verbosity = verbosity
     }
 
     info(logMessage: string, customProperties: object = {}) {
-        this.log(logMessage, Severity.INFO, customProperties)
+        if (this.verbosity <= Verbosity.INFO) {
+            this.log(logMessage, Severity.INFO, customProperties)
+        }
     }
 
-    warn(logMessage: string, customProperties: object = {}) {
-        this.log(logMessage, Severity.WARN, customProperties)
+    warn(logMessage: string,  customProperties: object = {}) {
+        if(this.verbosity <= Verbosity.WARN) {
+            this.log(logMessage, Severity.WARN, customProperties)
+        }
     }
 
     trace(logMessage: string, customProperties: object = {}) {
-        this.log(logMessage, Severity.TRACE, customProperties)
+        if(this.verbosity <= Verbosity.DEBUG){
+            this.log(logMessage, Severity.TRACE, customProperties)
+        }
     }
 
     debug(logMessage: string, customProperties: object = {}) {
-        this.log(logMessage, Severity.DEBUG, customProperties)
+        if(this.verbosity <= Verbosity.DEBUG){
+           this.log(logMessage, Severity.DEBUG, customProperties)
+        }
     }
 
     error(logMessage: string, customProperties: object = {}) {
