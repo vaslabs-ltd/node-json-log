@@ -34,36 +34,36 @@ export class TargetLogger{
     }
 
     info(logMessage: string, customProperties: object = {}) {
-        if (this.verbosity <= Verbosity.INFO) {
-            this.log(logMessage, Severity.INFO, customProperties)
-        }
+        this.log(logMessage, Severity.INFO, customProperties)
     }
 
     warn(logMessage: string,  customProperties: object = {}) {
-        if(this.verbosity <= Verbosity.WARN) {
-            this.log(logMessage, Severity.WARN, customProperties)
-        }
+        this.log(logMessage, Severity.WARN, customProperties)
     }
 
     trace(logMessage: string, customProperties: object = {}) {
-        if(this.verbosity <= Verbosity.DEBUG){
-            this.log(logMessage, Severity.TRACE, customProperties)
-        }
+        this.log(logMessage, Severity.TRACE, customProperties)
     }
 
     debug(logMessage: string, customProperties: object = {}) {
-        if(this.verbosity <= Verbosity.DEBUG){
-           this.log(logMessage, Severity.DEBUG, customProperties)
-        }
+        this.log(logMessage, Severity.DEBUG, customProperties)
     }
 
     error(logMessage: string, customProperties: object = {}) {
         this.log(logMessage, Severity.ERROR, customProperties)
     }
-    
+
+    checkVerbosityLevel(severity: Severity): boolean {
+        return (this.verbosity <= this.toVerbosity(severity))
+    }
+    toVerbosity(severity: Severity): Verbosity {
+        return Verbosity[severity]
+    }
     log(logMessage: string, severity: Severity = Severity.INFO, customProperties: object = {}){
-        const json = this.jsonLogger.log(logMessage, severity, customProperties)
-        this.sendToTarget(json)
+        if (this.checkVerbosityLevel(severity)) {
+            const json = this.jsonLogger.log(logMessage, severity, customProperties)
+            this.sendToTarget(json)
+        }
     }
 }
 
