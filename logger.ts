@@ -53,28 +53,36 @@ export class TargetLogger{
         this.log(logMessage, Severity.ERROR, customProperties)
     }
 
-    checkVerbosityLevel(severity: Severity): boolean {
+    private checkVerbosityLevel(severity: Severity): boolean {
         return (this.verbosity <= this.toVerbosity(severity))
     }
-    toVerbosity(severity: Severity): Verbosity {
+    private toVerbosity(severity: Severity): Verbosity {
         return Verbosity[severity]
     }
     log(logMessage: string, severity: Severity = Severity.INFO, customProperties: object = {}){
         if (this.checkVerbosityLevel(severity)) {
-            const json = this.jsonLogger.log(logMessage, severity, customProperties)
+            const json = this.makeJson(logMessage, severity, customProperties)
             this.sendToTarget(json)
         }
     }
+
+    makeJson(logMessage: string, severity: Severity, customProperties: object): object {
+        return this.jsonLogger.log(logMessage, severity, customProperties);
+    }
 }
 
-/*
-    enums are singleton types (single instance within the virtual machine process (nodejs runs in a v8 VM))
+export class TimeAwareLogger extends TargetLogger{
+    getTime: () => string;
 
-    sealed trait Severity
-    case object INFO extends Severity
+    constructor(sendToTarget: (j: any) => void, verbosity: Verbosity = Verbosity.TRACE, getTime: () => string){
+        super(sendToTarget, verbosity)
+        this.getTime = getTime
+    }
 
-    Set of Severity (DEBUG, INFO)
-
-    class A(Boolean, Boolean) => 2x2 = 4 // unlimited instances of A
-    Severity (size N) = N // N instances of Severity
-*/
+    override makeJson(logMessage: string, severity: Severity, customProperties: object): object {
+        const json = super.makeJson(logMessage, severity, customProperties)
+        const timestamp = this.getTime()
+        const jsonWithTimestamp = {...json, timestamp: timestamp}
+        return jsonWithTimestamp
+    }
+}

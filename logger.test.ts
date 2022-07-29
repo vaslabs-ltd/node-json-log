@@ -1,4 +1,4 @@
-import { FunctionalLogger, Severity, TargetLogger, Verbosity } from "./logger";
+import { FunctionalLogger, Severity, TargetLogger, TimeAwareLogger, Verbosity } from "./logger";
 
 test('logs simple message in Json format', () =>{
  
@@ -38,22 +38,6 @@ test("custom properties take precedence over logger properties", () => {
 })
 
 
-/*
-    include severity
-    (verbosity level)
-
-    TRACE
-    DEBUG
-    INFO
-    WARN
-    ERROR
-
-    logger.log by default INFO
-    or pass explicitly
-    logger.log(message, severity)
-
-    severity is an enum of the above
-*/
 test('logs simple message with custom severity in Json format', () =>{
  
     const logMessage = "Hello"
@@ -154,4 +138,19 @@ test("does not log messages not included in the verbosity level", () => {
     logger.error(logMessage)
     expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.ERROR)))
 
+})
+
+
+test("log messages with timestamp", () => {
+    const expectedTimestamp = new Date().toISOString()
+    const logMessage = "Hello"
+    let target: string = ""
+    const sendToTarget = (json: object) => {target = JSON.stringify(json);};
+
+    const logger = new TimeAwareLogger(sendToTarget, Verbosity.INFO, () => expectedTimestamp)
+
+    const expectedLogStatement =  ({message: logMessage, severity: Severity.INFO, timestamp: expectedTimestamp})
+
+    logger.info(logMessage)
+    expect(target).toEqual(JSON.stringify(expectedLogStatement))
 })
