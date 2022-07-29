@@ -1,4 +1,4 @@
-import { FunctionalLogger, Severity, TargetLogger } from "./logger";
+import { FunctionalLogger, Severity, TargetLogger, Verbosity } from "./logger";
 
 test('logs simple message in Json format', () =>{
  
@@ -134,3 +134,24 @@ test('logs messages with severity and custom property to target', () => {
         expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.ERROR)))
     }
 )
+
+
+test("does not log messages not included in the verbosity level", () => {
+    const logMessage = "Hello"
+
+    const expectedLogStatement: (s: Severity) => {message: String, severity: Severity} = 
+            (s: Severity) => ({message: logMessage, severity: s})
+
+    let target: string = ""
+    const logger = new TargetLogger(json => {target = JSON.stringify(json);}, Verbosity.ERROR)
+    
+    logger.info(logMessage)
+    logger.warn(logMessage)
+    logger.debug(logMessage)
+    logger.trace(logMessage)
+    expect(target).toEqual("")
+    
+    logger.error(logMessage)
+    expect(target).toEqual(JSON.stringify(expectedLogStatement(Severity.ERROR)))
+
+})

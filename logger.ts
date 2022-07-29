@@ -6,6 +6,13 @@ export enum Severity {
     ERROR = "ERROR"
 }
 
+export enum Verbosity {
+    TRACE = 0,
+    DEBUG = 1,
+    INFO = 2,
+    WARN = 3, 
+    ERROR = 4
+}
 
 export class FunctionalLogger{
     log(logMessage: string, severity: Severity = Severity.INFO, userProperties: object = {}) {
@@ -18,17 +25,19 @@ export class TargetLogger{
     
     jsonLogger: FunctionalLogger
     sendToTarget: (j: any) => void;
+    verbosity: Verbosity;
 
-    constructor(sendToTarget: (j: any) => void ){
+    constructor(sendToTarget: (j: any) => void, verbosity: Verbosity = Verbosity.TRACE ){
         this.jsonLogger = new FunctionalLogger();
         this.sendToTarget = sendToTarget
+        this.verbosity = verbosity
     }
 
     info(logMessage: string, customProperties: object = {}) {
         this.log(logMessage, Severity.INFO, customProperties)
     }
 
-    warn(logMessage: string, customProperties: object = {}) {
+    warn(logMessage: string,  customProperties: object = {}) {
         this.log(logMessage, Severity.WARN, customProperties)
     }
 
@@ -43,10 +52,18 @@ export class TargetLogger{
     error(logMessage: string, customProperties: object = {}) {
         this.log(logMessage, Severity.ERROR, customProperties)
     }
-    
+
+    checkVerbosityLevel(severity: Severity): boolean {
+        return (this.verbosity <= this.toVerbosity(severity))
+    }
+    toVerbosity(severity: Severity): Verbosity {
+        return Verbosity[severity]
+    }
     log(logMessage: string, severity: Severity = Severity.INFO, customProperties: object = {}){
-        const json = this.jsonLogger.log(logMessage, severity, customProperties)
-        this.sendToTarget(json)
+        if (this.checkVerbosityLevel(severity)) {
+            const json = this.jsonLogger.log(logMessage, severity, customProperties)
+            this.sendToTarget(json)
+        }
     }
 }
 
