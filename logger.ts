@@ -86,15 +86,3 @@ export class TimeAwareLogger extends TargetLogger{
         return jsonWithTimestamp
     }
 }
-
-/*
-    enums are singleton types (single instance within the virtual machine process (nodejs runs in a v8 VM))
-
-    sealed trait Severity
-    case object INFO extends Severity
-
-    Set of Severity (DEBUG, INFO)
-
-    class A(Boolean, Boolean) => 2x2 = 4 // unlimited instances of A
-    Severity (size N) = N // N instances of Severity
-*/

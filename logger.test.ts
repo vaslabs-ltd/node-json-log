@@ -38,22 +38,6 @@ test("custom properties take precedence over logger properties", () => {
 })
 
 
-/*
-    include severity
-    (verbosity level)
-
-    TRACE
-    DEBUG
-    INFO
-    WARN
-    ERROR
-
-    logger.log by default INFO
-    or pass explicitly
-    logger.log(message, severity)
-
-    severity is an enum of the above
-*/
 test('logs simple message with custom severity in Json format', () =>{
  
     const logMessage = "Hello"
